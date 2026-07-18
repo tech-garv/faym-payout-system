@@ -280,19 +280,6 @@ Recommended testing order:
 
 ---
 
-# 🚀 Future Improvements
-
-- JWT Authentication
-- Role-Based Access Control (RBAC)
-- Transaction History
-- Docker Support
-- Unit & Integration Testing
-- Swagger/OpenAPI Documentation
-- CI/CD Pipeline
-- Cloud Deployment (Render/Railway)
-
----
-
 # 👨‍💻 Author
 
 **Garv Puri**
