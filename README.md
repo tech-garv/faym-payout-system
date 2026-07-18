@@ -10,168 +10,98 @@ The Faym Payout System automates the payout lifecycle for affiliate partners. It
 
 ---
 
+# 🎯 Assignment Objectives
+
+This project was developed as part of the **Faym SDE Intern Assignment** to demonstrate:
+
+* Low-Level System Design (LLD)
+* REST API Design
+* Relational Database Design
+* Business Rule Implementation
+* MVC Architecture
+* Wallet & Payout Management
+
+---
+
 # 📖 Business Scenario
 
 Consider an affiliate partner named **Mohan**.
 
 Whenever Mohan sells products through Faym:
 
-- Receives **10% of the sale amount** as an advance payout.
-- Receives the remaining payout after the order is approved.
-- If the order is rejected, the advance payout is deducted from the wallet.
-- Can withdraw wallet funds only **once every 24 hours**.
-- Gets automatic wallet recovery if a payout fails.
-
----
-
-# 🔄 Example Workflow
-
-## 1️⃣ Create User
-
-```json
-{
-  "username": "Mohan"
-}
-```
-
-**Wallet Balance**
-
-```
-₹0
-```
-
----
-
-## 2️⃣ Create Sales
-
-| Product | Sale Amount |
-|----------|------------:|
-| Nike Shoes | ₹1000 |
-| Adidas T-Shirt | ₹2000 |
-
-**Total Sales**
-
-```
-₹3000
-```
-
----
-
-## 3️⃣ Advance Payout (10%)
-
-| Product | Advance Payout |
-|----------|---------------:|
-| Nike Shoes | ₹100 |
-| Adidas T-Shirt | ₹200 |
-
-**Wallet Balance**
-
-```
-₹300
-```
-
----
-
-## 4️⃣ Reconciliation
-
-Both orders are approved.
-
-| Product | Remaining Payout |
-|----------|-----------------:|
-| Nike Shoes | ₹900 |
-| Adidas T-Shirt | ₹1800 |
-
-**Updated Wallet**
-
-```
-₹300
-+ ₹900
-+ ₹1800
-------------
-₹3000
-```
-
----
-
-## 5️⃣ Withdrawal
-
-Withdrawal Request
-
-```
-₹1000
-```
-
-**Wallet Balance**
-
-```
-₹3000
-- ₹1000
-------------
-₹2000
-```
-
-Trying another withdrawal within 24 hours returns:
-
-```json
-{
-  "message": "Withdrawal allowed only once every 24 hours"
-}
-```
-
----
-
-## 6️⃣ Failed Payout Recovery
-
-If a payout of
-
-```
-₹200
-```
-
-fails,
-
-the system automatically credits
-
-```
-₹200
-```
-
-back to the affiliate's wallet.
+* Receives **10%** of every eligible pending sale as an advance payout.
+* Receives the remaining payout after the sale is approved.
+* If a sale is rejected, the advance payout is adjusted from the final settlement.
+* Can withdraw wallet funds only once every **24 hours**.
+* Gets automatic wallet recovery if a payout fails.
 
 ---
 
 # ✨ Features
 
-- 👤 User Management
-- 🛒 Sales Management
-- 💸 10% Advance Payout Processing
-- ✅ Order Reconciliation
-- 👛 Wallet Management
-- 💰 Withdrawal System
-- ⏰ 24-Hour Withdrawal Rule
-- 🔄 Failed Payout Recovery
-- 📡 RESTful APIs
-- 🗄️ MySQL Database Integration
+* 👤 User Management
+* 🛒 Sales Management
+* 💸 10% Advance Payout
+* ✅ Sale Reconciliation
+* 👛 Wallet Management
+* 💰 Withdrawal Processing
+* ⏰ One Withdrawal Every 24 Hours
+* 🔄 Failed Payout Recovery
+* 📜 Payout History
+* 📡 RESTful APIs
+* 🗄️ MySQL Integration
+* 🧱 MVC Architecture
 
 ---
 
-# 🛠 Tech Stack
+# 🏗️ System Architecture
 
-| Technology | Purpose |
-|------------|---------|
-| Node.js | Runtime Environment |
-| Express.js | Backend Framework |
-| MySQL | Relational Database |
-| mysql2 | MySQL Driver |
-| dotenv | Environment Variable Management |
-| Postman | API Testing |
+```text
+Client (Postman)
+
+        │
+
+        ▼
+
+Express Server
+
+        │
+
+        ▼
+
+Routes
+
+        │
+
+        ▼
+
+Controllers
+
+        │
+
+        ▼
+
+Services
+
+        │
+
+        ▼
+
+Models
+
+        │
+
+        ▼
+
+MySQL Database
+```
 
 ---
 
 # 📂 Project Structure
 
 ```text
-faym-payout-system
+faym-payout-system/
 │
 ├── config/
 ├── controllers/
@@ -181,16 +111,33 @@ faym-payout-system
 ├── sql/
 │   └── schema.sql
 ├── .env.example
+├── .gitignore
+├── LLD.md
+├── README.md
 ├── app.js
+├── server.js
 ├── package.json
-└── README.md
+└── package-lock.json
 ```
+
+---
+
+# 🛠️ Tech Stack
+
+| Technology | Purpose               |
+| ---------- | --------------------- |
+| Node.js    | Runtime Environment   |
+| Express.js | Backend Framework     |
+| MySQL      | Relational Database   |
+| mysql2     | MySQL Driver          |
+| dotenv     | Environment Variables |
+| Postman    | API Testing           |
 
 ---
 
 # ⚙️ Installation
 
-## 1. Clone the Repository
+## 1. Clone Repository
 
 ```bash
 git clone https://github.com/tech-garv/faym-payout-system.git
@@ -209,7 +156,7 @@ npm install
 
 ## 3. Configure Environment Variables
 
-Create a `.env` file in the project root using `.env.example`.
+Create a `.env` file using `.env.example`.
 
 ```env
 PORT=5000
@@ -220,29 +167,27 @@ DB_PASSWORD=your_mysql_password
 DB_NAME=faym_payout
 ```
 
-Replace the placeholder values with your local MySQL configuration.
-
 ---
 
-## 4. Import the Database
+## 4. Create Database
 
-Import the SQL schema into your MySQL database.
+Import the SQL schema.
 
-```
+```text
 sql/schema.sql
 ```
 
 ---
 
-## 5. Run the Application
+## 5. Run Application
 
 ```bash
 npm run dev
 ```
 
-The server will start at:
+Server starts at
 
-```
+```text
 http://localhost:5000
 ```
 
@@ -250,26 +195,155 @@ http://localhost:5000
 
 # 📬 API Endpoints
 
+## Users
+
 | Method | Endpoint | Description |
-|---------|----------|-------------|
-| POST | `/users` | Create a new user |
-| GET | `/users` | Retrieve all users |
-| POST | `/sales` | Create a new sale |
-| GET | `/sales` | Retrieve all sales |
-| POST | `/payouts/advance` | Process advance payout |
-| POST | `/payouts/reconcile` | Approve or reject a sale |
-| POST | `/payouts/recover` | Recover a failed payout |
-| GET | `/payouts` | Retrieve payout history |
-| POST | `/withdrawals` | Withdraw wallet balance |
-| GET | `/withdrawals` | Retrieve withdrawal history |
+| ------ | -------- | ----------- |
+| POST   | `/users` | Create User |
+| GET    | `/users` | Get Users   |
 
 ---
 
-# 🧪 API Testing
+## Sales
 
-Use **Postman** or any API client to test the REST APIs.
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| POST   | `/sales` | Create Sale |
+| GET    | `/sales` | Get Sales   |
 
-Recommended testing order:
+---
+
+## Payouts
+
+| Method | Endpoint             | Description            |
+| ------ | -------------------- | ---------------------- |
+| POST   | `/payouts/advance`   | Process Advance Payout |
+| POST   | `/payouts/reconcile` | Approve or Reject Sale |
+| POST   | `/payouts/recover`   | Recover Failed Payout  |
+| GET    | `/payouts`           | Get Payout History     |
+
+---
+
+## Withdrawals
+
+| Method | Endpoint       | Description             |
+| ------ | -------------- | ----------------------- |
+| POST   | `/withdrawals` | Withdraw Wallet Balance |
+| GET    | `/withdrawals` | Withdrawal History      |
+
+---
+
+# 🔄 Example Workflow
+
+### Step 1
+
+Create User
+
+↓
+
+Wallet Created
+
+↓
+
+₹0 Balance
+
+---
+
+### Step 2
+
+Create Pending Sale
+
+↓
+
+₹1000 Sale
+
+↓
+
+Advance Eligible
+
+---
+
+### Step 3
+
+Advance Payout
+
+↓
+
+10%
+
+↓
+
+₹100 Credited
+
+---
+
+### Step 4
+
+Admin Reconciliation
+
+Approved
+
+↓
+
+Remaining ₹900 Credited
+
+OR
+
+Rejected
+
+↓
+
+₹100 Adjusted
+
+---
+
+### Step 5
+
+Withdrawal
+
+↓
+
+Wallet Balance Checked
+
+↓
+
+24-Hour Rule Checked
+
+↓
+
+Withdrawal Created
+
+---
+
+### Step 6
+
+Failed Recovery
+
+↓
+
+Gateway Failure
+
+↓
+
+Wallet Refunded
+
+---
+
+# 📄 Documentation
+
+The repository includes:
+
+* **README.md** – Project overview and setup guide.
+* **LLD.md** – Low-Level Design including architecture, workflows, database design, class design, APIs, and design decisions.
+* **sql/schema.sql** – Database schema.
+
+---
+
+# 🧪 Testing
+
+The APIs can be tested using **Postman** or any REST client.
+
+Recommended order:
 
 1. Create User
 2. Create Sale
@@ -277,6 +351,8 @@ Recommended testing order:
 4. Reconcile Sale
 5. Withdraw Funds
 6. Recover Failed Payout
+
+
 
 ---
 
@@ -287,3 +363,11 @@ Recommended testing order:
 B.Tech Computer Science Engineering
 
 Backend Developer | Node.js | Express.js | MySQL
+
+GitHub: https://github.com/tech-garv
+
+---
+
+# 📜 License
+
+This project is developed for educational and internship assessment purposes.
